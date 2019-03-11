@@ -9,7 +9,7 @@ This is a plugin for [@craco/craco](https://github.com/sharegate/craco).
 ### 1. Create a React project
 
 ```sh
-npm -g i create-react-app # or yarn global add create-react-app
+npm install -g create-react-app # or yarn global add create-react-app
 create-react-app example
 cd example
 ```
@@ -82,9 +82,11 @@ CracoCesiumPlugin({
 
 ### `loadPartially`
 
-If false, whole Cesium will be loaded in HTML and `window.Cesium` is used in `import { ... } from "cesium";`.
+If false, whole Cesium will be loaded in HTML and `window.Cesium` is used in `import { ... } from "cesium";`. This is the easiest way.
 
-Otherwise, Cesium will be load partially and bundled in the JS. For details, refer to [Cesium official tutorial](https://cesium.com/docs/tutorials/cesium-and-webpack/).
+Otherwise, Cesium will be load partially and bundled in the JS. You have to install `strip-pragma-loader` to build Cesium for production: `npm i -S strip-pragma-loader`.
+
+For more details, refer to [Cesium official tutorial](https://cesium.com/docs/tutorials/cesium-and-webpack/).
 
 ### `loadCSSinHTML`
 

@@ -9,10 +9,12 @@
   "dependencies": {
     "copy-webpack-plugin": "^5.0.0",
     "html-webpack-include-assets-plugin": "^1.0.7",
-    "strip-pragma-loader": "^1.0.0",
     "webpack": "^4.29.6"
   },
   "peerDependencies": {
     "@craco/craco": "*"
+  },
+  "optionalDependencies": {
+    "strip-pragma-loader": "*"
   }
 }
