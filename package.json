@@ -1,6 +1,6 @@
 {
   "name": "craco-cesium",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Let's use Cesium with create-react-app today!",
   "main": "index.js",
   "repository": "https://github.com/darwin-education/craco-cesium.git",
