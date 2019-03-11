@@ -6,6 +6,9 @@
   "repository": "https://github.com/darwin-education/craco-cesium.git",
   "author": "Darwin Education, Onc. <info@darwineducation.com>",
   "license": "MIT",
+  "files": [
+    "index.js"
+  ],
   "dependencies": {
     "copy-webpack-plugin": "^5.0.0",
     "html-webpack-include-assets-plugin": "^1.0.7",
