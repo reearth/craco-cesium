@@ -51,7 +51,7 @@ const CracoCesiumPlugin = require("craco-cesium");
 module.exports = {
   plugins: [
     {
-      plugin: CracoCesiumPlugin(/* options */)
+      plugin: CracoCesiumPlugin()
     }
   ]
 };
@@ -73,14 +73,33 @@ import { Viewer, Entity, Color } from "cesium";
 
 If the option is omiited, the default options is used:
 
-```json
-{
-  "loadPartially": false
-}
+```js
+CracoCesiumPlugin({
+  loadPartially: false,
+  loadCSSinHTML: true
+});
 ```
 
-### loadPartially
+### `loadPartially`
 
 If false, whole Cesium will be loaded in HTML and `window.Cesium` is used in `import { ... } from "cesium";`.
 
-If true, Cesium will be load partially and bundled in the JS. For details, refer to [Cesium official tutorial](https://cesium.com/docs/tutorials/cesium-and-webpack/).
+Otherwise, Cesium will be load partially and bundled in the JS. For details, refer to [Cesium official tutorial](https://cesium.com/docs/tutorials/cesium-and-webpack/).
+
+### `loadCSSinHTML`
+
+If true, `Widgets/widgets.css` in Cesium is loaded in HTML.
+
+Otherwise, you have to load the CSS once manually as following.
+
+If `loadPartially` is true:
+
+```js
+import "cesium/Widgets/widgets.css";
+```
+
+Otherwise:
+
+```js
+import "cesium/Build/CesiumUnminified/Widgets/widgets.css";
+```

@@ -8,7 +8,12 @@ const HtmlWebpackIncludeAssetPlugin = require("html-webpack-include-assets-plugi
 const cesiumSource = "node_modules/cesium/Source";
 const cesiumWorkers = "../Build/Cesium/Workers";
 
-module.exports = ({ loadPartially } = { loadPartially: false }) => ({
+module.exports = (
+  { loadPartially, loadCSSinHTML } = {
+    loadPartially: false,
+    loadCSSinHTML: true
+  }
+) => ({
   overrideWebpackConfig: ({ webpackConfig, context: { env } }) => {
     const prod = env === "production";
 
@@ -55,10 +60,14 @@ module.exports = ({ loadPartially } = { loadPartially: false }) => ({
             to: "cesium/Widgets"
           }
         ]),
-        new HtmlWebpackIncludeAssetPlugin({
-          append: false,
-          assets: ["cesium/Widgets/widgets.css"]
-        }),
+        ...(loadCSSinHTML
+          ? [
+              new HtmlWebpackIncludeAssetPlugin({
+                append: false,
+                assets: ["cesium/Widgets/widgets.css"]
+              })
+            ]
+          : []),
         new webpack.DefinePlugin({
           CESIUM_BASE_URL: JSON.stringify("cesium")
         })
@@ -93,7 +102,10 @@ module.exports = ({ loadPartially } = { loadPartially: false }) => ({
         ]),
         new HtmlWebpackIncludeAssetPlugin({
           append: false,
-          assets: ["cesium/Widgets/widgets.css", "cesium/Cesium.js"]
+          assets: [
+            ...(loadCSSinHTML ? ["cesium/Widgets/widgets.css"] : []),
+            "cesium/Cesium.js"
+          ]
         }),
         new webpack.DefinePlugin({
           CESIUM_BASE_URL: JSON.stringify("cesium")
