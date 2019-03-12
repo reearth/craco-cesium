@@ -69,6 +69,13 @@ You can import Cesium as following:
 import { Viewer, Entity, Color } from "cesium";
 ```
 
+If you are using [Resium](https://resium.darwineducation.com), you can import Cesium and Resium as following.
+
+```js
+import { Color } from "cesium";
+import { Viewer, Entity } from "resium";
+```
+
 ## Options
 
 If the option is omiited, the default options is used:
