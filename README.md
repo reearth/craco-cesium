@@ -63,10 +63,10 @@ Set up is complete! Enjoy your Cesium life.
 
 [Resium](https://resium.darwineducation.com) is also recommended.
 
-You can import Cesium as following:
+You can import resium as following:
 
 ```js
-import { Viewer, Entity, Color } from "cesium";
+import { Viewer, Entity, Color } from "resium";
 ```
 
 ## Options
