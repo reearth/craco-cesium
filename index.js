@@ -5,8 +5,30 @@ const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackIncludeAssetPlugin = require("html-webpack-include-assets-plugin");
 
-const cesiumSource = "node_modules/cesium/Source";
-const cesiumWorkers = "../Build/Cesium/Workers";
+let pnp;
+
+try {
+  pnp = require(`pnpapi`);
+} catch (error) {
+  // not in PnP; not a problem
+}
+
+let cesiumSource;
+
+if (pnp) {
+  // console.log("Craco Cesium using Pnp");
+  const topLevelLocation = pnp.getPackageInformation(pnp.topLevel)
+    .packageLocation;
+  cesiumSource = path.resolve(
+    pnp.resolveToUnqualified("cesium", topLevelLocation, {
+      considerBuiltins: false
+    }),
+    "Source"
+  );
+} else {
+  // console.log("Craco Cesium using normal module");
+  cesiumSource = path.resolve(__dirname, "node_modules/cesium/Source");
+}
 
 module.exports = (
   { loadPartially, loadCSSinHTML } = {
@@ -25,7 +47,7 @@ module.exports = (
         webpackConfig.module.push({
           test: /.js$/,
           enforce: "pre",
-          include: path.resolve(__dirname, cesiumSource),
+          include: cesiumSource,
           use: [
             {
               loader: "strip-pragma-loader",
@@ -48,15 +70,15 @@ module.exports = (
       webpackConfig.plugins.push(
         new CopyWebpackPlugin([
           {
-            from: path.join(cesiumSource, cesiumWorkers),
+            from: path.resolve(cesiumSource, "../Build/Cesium/Workers"),
             to: "cesium/Workers"
           },
           {
-            from: path.join(cesiumSource, "Assets"),
+            from: path.resolve(cesiumSource, "Assets"),
             to: "cesium/Assets"
           },
           {
-            from: path.join(cesiumSource, "Widgets"),
+            from: path.resolve(cesiumSource, "Widgets"),
             to: "cesium/Widgets"
           }
         ]),
@@ -96,7 +118,10 @@ module.exports = (
       webpackConfig.plugins.push(
         new CopyWebpackPlugin([
           {
-            from: `node_modules/cesium/Build/Cesium${prod ? "" : "Unminified"}`,
+            from: path.resolve(
+              cesiumSource,
+              `../Build/Cesium${prod ? "" : "Unminified"}`
+            ),
             to: "cesium"
           }
         ]),
