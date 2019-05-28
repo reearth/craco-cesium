@@ -27,7 +27,7 @@ if (pnp) {
   );
 } else {
   // console.log("Craco Cesium using normal module");
-  cesiumSource = path.resolve(process.cwd(), "node_modules/cesium/Source");
+  cesiumSource = "node_modules/cesium/Source";
 }
 
 module.exports = (
@@ -70,15 +70,15 @@ module.exports = (
       webpackConfig.plugins.push(
         new CopyWebpackPlugin([
           {
-            from: path.resolve(cesiumSource, "../Build/Cesium/Workers"),
+            from: path.join(cesiumSource, "../Build/Cesium/Workers"),
             to: "cesium/Workers"
           },
           {
-            from: path.resolve(cesiumSource, "Assets"),
+            from: path.join(cesiumSource, "Assets"),
             to: "cesium/Assets"
           },
           {
-            from: path.resolve(cesiumSource, "Widgets"),
+            from: path.join(cesiumSource, "Widgets"),
             to: "cesium/Widgets"
           }
         ]),
@@ -118,7 +118,7 @@ module.exports = (
       webpackConfig.plugins.push(
         new CopyWebpackPlugin([
           {
-            from: path.resolve(
+            from: path.join(
               cesiumSource,
               `../Build/Cesium${prod ? "" : "Unminified"}`
             ),
