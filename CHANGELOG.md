@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.1 - 2019/05/28
+
+- Fix some errors [#7](https://github.com/darwin-education/craco-cesium/pull/7)
+
 ## v1.1.0 - 2019/05/27
 
 - Support Yarn Plug'n'Play ([@crubier](https://github.com/crubier)) [#5](https://github.com/darwin-education/craco-cesium/pull/5)
