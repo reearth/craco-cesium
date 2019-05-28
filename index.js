@@ -3,7 +3,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const HtmlWebpackIncludeAssetPlugin = require("html-webpack-include-assets-plugin");
+const HtmlWebpackTagsPlugin = require("html-webpack-tags-plugin");
 
 let pnp;
 
@@ -84,9 +84,9 @@ module.exports = (
         ]),
         ...(loadCSSinHTML
           ? [
-              new HtmlWebpackIncludeAssetPlugin({
+              new HtmlWebpackTagsPlugin({
                 append: false,
-                assets: ["cesium/Widgets/widgets.css"]
+                tags: ["cesium/Widgets/widgets.css"]
               })
             ]
           : []),
@@ -125,9 +125,9 @@ module.exports = (
             to: "cesium"
           }
         ]),
-        new HtmlWebpackIncludeAssetPlugin({
+        new HtmlWebpackTagsPlugin({
           append: false,
-          assets: [
+          tags: [
             ...(loadCSSinHTML ? ["cesium/Widgets/widgets.css"] : []),
             "cesium/Cesium.js"
           ]
