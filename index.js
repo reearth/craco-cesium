@@ -3,7 +3,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const HtmlWebpackIncludeAssetPlugin = require("html-webpack-include-assets-plugin");
+const HtmlWebpackTagsPlugin = require("html-webpack-tags-plugin");
 
 let pnp;
 
@@ -27,7 +27,7 @@ if (pnp) {
   );
 } else {
   // console.log("Craco Cesium using normal module");
-  cesiumSource = path.resolve(__dirname, "node_modules/cesium/Source");
+  cesiumSource = "node_modules/cesium/Source";
 }
 
 module.exports = (
@@ -70,23 +70,23 @@ module.exports = (
       webpackConfig.plugins.push(
         new CopyWebpackPlugin([
           {
-            from: path.resolve(cesiumSource, "../Build/Cesium/Workers"),
+            from: path.join(cesiumSource, "../Build/Cesium/Workers"),
             to: "cesium/Workers"
           },
           {
-            from: path.resolve(cesiumSource, "Assets"),
+            from: path.join(cesiumSource, "Assets"),
             to: "cesium/Assets"
           },
           {
-            from: path.resolve(cesiumSource, "Widgets"),
+            from: path.join(cesiumSource, "Widgets"),
             to: "cesium/Widgets"
           }
         ]),
         ...(loadCSSinHTML
           ? [
-              new HtmlWebpackIncludeAssetPlugin({
+              new HtmlWebpackTagsPlugin({
                 append: false,
-                assets: ["cesium/Widgets/widgets.css"]
+                tags: ["cesium/Widgets/widgets.css"]
               })
             ]
           : []),
@@ -118,16 +118,16 @@ module.exports = (
       webpackConfig.plugins.push(
         new CopyWebpackPlugin([
           {
-            from: path.resolve(
+            from: path.join(
               cesiumSource,
               `../Build/Cesium${prod ? "" : "Unminified"}`
             ),
             to: "cesium"
           }
         ]),
-        new HtmlWebpackIncludeAssetPlugin({
+        new HtmlWebpackTagsPlugin({
           append: false,
-          assets: [
+          tags: [
             ...(loadCSSinHTML ? ["cesium/Widgets/widgets.css"] : []),
             "cesium/Cesium.js"
           ]
