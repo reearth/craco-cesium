@@ -27,7 +27,7 @@ if (pnp) {
   );
 } else {
   // console.log("Craco Cesium using normal module");
-  cesiumSource = "node_modules/cesium/Source";
+  cesiumSource = path.resolve(process.cwd(), "node_modules/cesium/Source");
 }
 
 module.exports = (
