@@ -77,7 +77,7 @@ import { Color } from "cesium";
 import { Viewer, Entity } from "resium";
 ```
 
-## 🔥Pro Tip: How to Enabling HMR
+## 🔥Pro Tip: Enabling HMR
 
 - ⚠️ This tips is available with yarn, not npm. 
 - 💡 Example project is [here](https://github.com/rot1024/create-react-app-cesium-example).
