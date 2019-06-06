@@ -120,7 +120,7 @@ export default hot(App);
 
 Done!
 
-Please refer to [react-hot-loader](https://github.com/gaearon/react-hot-loader) to refer the details.
+Please refer to [react-hot-loader](https://github.com/gaearon/react-hot-loader) to refer to the details.
 
 ## Options
 
