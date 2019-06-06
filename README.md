@@ -79,7 +79,8 @@ import { Viewer, Entity } from "resium";
 
 ## 🔥Pro Tip: How to Enabling HMR
 
-⚠️ This tips is available with yarn, not npm.
+- ⚠️ This tips is available with yarn, not npm. 
+- 💡 Example project is [here](https://github.com/rot1024/create-react-app-cesium-example).
 
 1. `yarn add craco-plugin-react-hot-reload react-hot-loader`
 
