@@ -4,12 +4,17 @@ Let's use 🌍[Cesium](https://cesiumjs.org) with [create-react-app](https://git
 
 This is a plugin for [@craco/craco](https://github.com/sharegate/craco).
 
+💡Tip: [Resium](https://resium.darwineducation.com) is also recommended.
+
 ## Very very easy usage
 
 ### 1. Create a React project
 
 ```sh
-npm install -g create-react-app # or yarn global add create-react-app
+npm install -g create-react-app
+# or
+yarn global add create-react-app
+
 create-react-app example
 cd example
 ```
@@ -19,9 +24,9 @@ cd example
 In your create-react-app project, install modules:
 
 ```sh
-npm install --save @craco/craco craco-cesium cesium
+npm install --save @craco/craco craco-cesium cesium resium
 # or
-yarn add @craco/craco craco-cesium cesium
+yarn add @craco/craco craco-cesium cesium resium
 ```
 
 ### 3. Rewrite npm scripts
@@ -46,12 +51,10 @@ Rewrite npm scripts in `package.json` as following:
 Create `craco.config.js` in the proejct root:
 
 ```js
-const CracoCesiumPlugin = require("craco-cesium");
-
 module.exports = {
   plugins: [
     {
-      plugin: CracoCesiumPlugin()
+      plugin: require("craco-cesium")()
     }
   ]
 };
@@ -60,8 +63,6 @@ module.exports = {
 ### 5. Congratulations! 🎉
 
 Set up is complete! Enjoy your Cesium life.
-
-[Resium](https://resium.darwineducation.com) is also recommended.
 
 You can import Cesium as following:
 
@@ -75,6 +76,51 @@ If you are using [Resium](https://resium.darwineducation.com), you can import Ce
 import { Color } from "cesium";
 import { Viewer, Entity } from "resium";
 ```
+
+## 🔥Pro Tip: How to Enabling HMR
+
+⚠️ This tips is available with yarn, not npm.
+
+1. `yarn add craco-plugin-react-hot-reload react-hot-loader`
+
+2. Rewrite react-dom dependency in package.json and run `yarn`
+
+```
+  "react-dom": "npm:@hot-loader/react-dom@^16.8.6",
+```
+
+⚠️ `@hot-loader/react-dom`'s version should be the same as `react`'s.
+
+3. Add `craco-plugin-react-hot-reload` plugin to `craco.config.js`:
+
+```js
+module.exports = {
+  plugins: [
+    { plugin: require('craco-plugin-react-hot-reload') },
+    { plugin: require('craco-cesium')() }
+  ]
+};
+```
+
+4. Wrap root component with hot function in `src/App.js`
+
+```js
+export default App;
+```
+
+to 
+
+```js
+import { hot } from "react-hot-loader/root";
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+export default hot(App);
+```
+
+Done!
+
+Please refer to [react-hot-loader](https://github.com/gaearon/react-hot-loader) to refer the details.
 
 ## Options
 
