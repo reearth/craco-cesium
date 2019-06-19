@@ -48,7 +48,7 @@ Rewrite npm scripts in `package.json` as following:
 
 ### 4. Create craco config file
 
-Create `craco.config.js` in the proejct root:
+Create `craco.config.js` in the project root:
 
 ```js
 module.exports = {
