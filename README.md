@@ -79,26 +79,24 @@ import { Viewer, Entity } from "resium";
 
 ## 🔥Pro Tip: Enabling HMR
 
-- ⚠️ This tips is available with yarn, not npm. 
 - 💡 Example project is [here](https://github.com/rot1024/create-react-app-cesium-example).
 
-1. `yarn add craco-plugin-react-hot-reload react-hot-loader`
-
-2. Rewrite react-dom dependency in package.json and run `yarn`
-
-```
-  "react-dom": "npm:@hot-loader/react-dom@^16.8.6",
-```
+1. `yarn add craco-plugin-react-hot-reload react-hot-loader @hot-loader/react-dom`
 
 ⚠️ `@hot-loader/react-dom`'s version should be the same as `react`'s.
 
-3. Add `craco-plugin-react-hot-reload` plugin to `craco.config.js`:
+2. Add an alias of webpack and `craco-plugin-react-hot-reload` plugin to `craco.config.js`:
 
 ```js
 module.exports = {
+  webpack: {
+    alias: {
+      "react-dom": "@hot-loader/react-dom"
+    }
+  },
   plugins: [
-    { plugin: require('craco-plugin-react-hot-reload') },
-    { plugin: require('craco-cesium')() }
+    { plugin: require("craco-plugin-react-hot-reload") },
+    { plugin: require("craco-cesium")() }
   ]
 };
 ```
@@ -109,7 +107,7 @@ module.exports = {
 export default App;
 ```
 
-to 
+to
 
 ```js
 import { hot } from "react-hot-loader/root";
