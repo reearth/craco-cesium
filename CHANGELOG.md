@@ -5,6 +5,7 @@
 - Add `cesiumPath` option
 - Update webpack configuration to support Cesium v1.63
 - Fix some webpack config
+- Upgrade dependencies
 
 ## v1.1.1 - 2019/05/28
 
