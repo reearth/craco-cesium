@@ -6,17 +6,15 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackTagsPlugin = require("html-webpack-tags-plugin");
 
 let pnp;
-
 try {
-  pnp = require(`pnpapi`);
+  pnp = require("pnpapi");
 } catch (error) {
   // not in PnP; not a problem
 }
 
 let cesiumSource;
-
 if (pnp) {
-  // console.log("Craco Cesium using Pnp");
+  // Craco Cesium using Pnp
   const topLevelLocation = pnp.getPackageInformation(pnp.topLevel)
     .packageLocation;
   cesiumSource = path.resolve(
@@ -26,28 +24,46 @@ if (pnp) {
     "Source"
   );
 } else {
-  // console.log("Craco Cesium using normal module");
+  // Craco Cesium using normal module
   cesiumSource = "node_modules/cesium/Source";
 }
 
-module.exports = (
-  { loadPartially, loadCSSinHTML } = {
-    loadPartially: false,
-    loadCSSinHTML: true
-  }
-) => ({
+let amd = false;
+try {
+  const cesiumPackageJson = require(path.resolve(
+    cesiumSource,
+    "..",
+    "package.json"
+  ));
+  const versionStr = cesiumPackageJson.version.split(".");
+  const version = parseFloat(versionStr[0] + "." + versionStr[1]);
+  amd = version < 1.63;
+} catch (e) {
+  // ignore
+}
+
+module.exports = options => ({
   overrideWebpackConfig: ({ webpackConfig, context: { env } }) => {
+    const { loadPartially, loadCSSinHTML, cesiumPath } = {
+      loadPartially: false,
+      loadCSSinHTML: true,
+      cesiumPath: "cesium",
+      ...options
+    };
+
     const prod = env === "production";
 
     if (loadPartially) {
+      // https://github.com/AnalyticalGraphicsInc/cesium-webpack-example
       // https://cesium.com/docs/tutorials/cesium-and-webpack/
 
       if (prod) {
         // Strip cesium pragmas
-        webpackConfig.module.push({
+        webpackConfig.module.rules.push({
           test: /.js$/,
           enforce: "pre",
-          include: cesiumSource,
+          include: path.resolve(__dirname, cesiumSource),
+          sideEffects: false,
           use: [
             {
               loader: "strip-pragma-loader",
@@ -71,41 +87,47 @@ module.exports = (
         new CopyWebpackPlugin([
           {
             from: path.join(cesiumSource, "../Build/Cesium/Workers"),
-            to: "cesium/Workers"
+            to: path.join(cesiumPath, "Workers")
+          },
+          {
+            from: path.join(cesiumSource, "../Build/Cesium/ThirdParty"),
+            to: path.join(cesiumPath, "ThirdParty")
           },
           {
             from: path.join(cesiumSource, "Assets"),
-            to: "cesium/Assets"
+            to: path.join(cesiumPath, "Assets")
           },
           {
             from: path.join(cesiumSource, "Widgets"),
-            to: "cesium/Widgets"
+            to: path.join(cesiumPath, "Widgets")
           }
         ]),
         ...(loadCSSinHTML
           ? [
               new HtmlWebpackTagsPlugin({
                 append: false,
-                tags: ["cesium/Widgets/widgets.css"]
+                tags: [path.join(cesiumPath, "Widgets", "widgets.css")]
               })
             ]
           : []),
         new webpack.DefinePlugin({
-          CESIUM_BASE_URL: JSON.stringify("cesium")
+          CESIUM_BASE_URL: JSON.stringify(cesiumPath)
         })
       );
 
-      webpackConfig.output = {
-        ...webpackConfig.output,
-        // Needed to compile multiline strings in Cesium
-        sourcePrefix: ""
-      };
+      if (amd) {
+        webpackConfig.output = {
+          ...webpackConfig.output,
+          // Needed to compile multiline strings in Cesium
+          sourcePrefix: ""
+        };
 
-      webpackConfig.amd = {
-        ...webpackConfig.amd,
-        // Enable webpack-friendly use of require in Cesium
-        toUrlUndefined: true
-      };
+        webpackConfig.amd = {
+          ...webpackConfig.amd,
+          // Enable webpack-friendly use of require in Cesium
+          toUrlUndefined: true
+        };
+      }
 
       webpackConfig.node = {
         ...webpackConfig.node,
@@ -122,18 +144,18 @@ module.exports = (
               cesiumSource,
               `../Build/Cesium${prod ? "" : "Unminified"}`
             ),
-            to: "cesium"
+            to: cesiumPath
           }
         ]),
         new HtmlWebpackTagsPlugin({
           append: false,
           tags: [
             ...(loadCSSinHTML ? ["cesium/Widgets/widgets.css"] : []),
-            "cesium/Cesium.js"
+            path.join(cesiumPath, "Cesium.js")
           ]
         }),
         new webpack.DefinePlugin({
-          CESIUM_BASE_URL: JSON.stringify("cesium")
+          CESIUM_BASE_URL: JSON.stringify(cesiumPath)
         })
       );
 
