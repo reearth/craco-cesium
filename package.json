@@ -4,7 +4,7 @@
   "description": "Let's use Cesium with create-react-app today!",
   "main": "index.js",
   "repository": "https://github.com/darwin-education/craco-cesium.git",
-  "author": "Darwin Education, Onc. <info@darwineducation.com>",
+  "author": "Darwin Education, Inc. <info@darwineducation.com>",
   "license": "MIT",
   "files": [
     "index.js"
