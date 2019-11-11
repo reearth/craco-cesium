@@ -10,9 +10,9 @@
     "index.js"
   ],
   "dependencies": {
-    "copy-webpack-plugin": "^5.0.3",
-    "html-webpack-tags-plugin": "^2.0.12",
-    "webpack": "^4.32.2"
+    "copy-webpack-plugin": "^5.0.5",
+    "html-webpack-tags-plugin": "^2.0.17",
+    "webpack": "^4.41.2"
   },
   "peerDependencies": {
     "@craco/craco": "*"
