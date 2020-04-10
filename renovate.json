@@ -1,0 +1,15 @@
+{
+  "extends": [
+    "config:base",
+    ":timezone(Asia/Tokyo)",
+    ":semanticCommits",
+    ":semanticCommitScopeDisabled",
+    ":automergeMinor",
+    ":automergeBranch",
+    ":maintainLockFilesWeekly",
+    ":enableVulnerabilityAlertsWithLabel(security)"
+  ],
+  "schedule": [
+    "every weekend"
+  ]
+}
