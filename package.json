@@ -10,7 +10,7 @@
     "index.js"
   ],
   "dependencies": {
-    "copy-webpack-plugin": "^5.1.1",
+    "copy-webpack-plugin": "^6.0.0",
     "html-webpack-tags-plugin": "^2.0.17",
     "webpack": "^4.42.1"
   },
