@@ -12,7 +12,7 @@
   "dependencies": {
     "copy-webpack-plugin": "^5.1.1",
     "html-webpack-tags-plugin": "^2.0.17",
-    "webpack": "^4.42.1"
+    "webpack": "^5.0.0"
   },
   "peerDependencies": {
     "@craco/craco": "*"
