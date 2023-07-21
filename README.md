@@ -1,10 +1,12 @@
 # craco-cesium
 
-Let's use 🌍[Cesium](https://cesiumjs.org) with [create-react-app](https://github.com/facebook/create-react-app) today!
+Let's use 🌍[Cesium](https://cesiumjs.org) with [create-react-app](https://github.com/facebook/create-react-app) today! This is a plugin for [@craco/craco](https://github.com/sharegate/craco). [Resium](https://resium.darwineducation.com) is also recommended.
 
-This is a plugin for [@craco/craco](https://github.com/sharegate/craco).
+## NOTE: Unmaintained: Vite is recommended rather thant create-react-app
 
-💡Tip: [Resium](https://resium.darwineducation.com) is also recommended.
+Currently create-react-app development is inactive. Now it would be a good time to start using Vite to start development as it is easier and faster. See [Resium documentation](https://resium.reearth.io/installation#5-vite) for more information.
+
+There are no plans to perform any maintenance on this library. If you have any requests for additional functionality or dependency upgrading, please send us a pull request!
 
 ## Very very easy usage
 
@@ -129,7 +131,7 @@ If the option is omiited, the default options is used:
 CracoCesiumPlugin({
   loadPartially: false,
   loadCSSinHTML: true,
-  cesiumPath: "cesium"
+  cesiumPath: "cesium",
 });
 ```
 
