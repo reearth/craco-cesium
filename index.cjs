@@ -5,51 +5,17 @@ const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackTagsPlugin = require("html-webpack-tags-plugin");
 
-let pnp;
-try {
-  pnp = require("pnpapi");
-} catch (error) {
-  // not in PnP; not a problem
-}
-
-let cesiumSource;
-if (pnp) {
-  // Craco Cesium using Pnp
-  const topLevelLocation = pnp.getPackageInformation(pnp.topLevel)
-    .packageLocation;
-  cesiumSource = path.resolve(
-    pnp.resolveToUnqualified("cesium", topLevelLocation, {
-      considerBuiltins: false
-    }),
-    "Source"
-  );
-} else {
-  // Craco Cesium using normal module
-  cesiumSource = "node_modules/cesium/Source";
-}
-
-let amd = false;
-try {
-  const cesiumPackageJson = require(path.resolve(
-    cesiumSource,
-    "..",
-    "package.json"
-  ));
-  const versionStr = cesiumPackageJson.version.split(".");
-  const version = parseFloat(versionStr[0] + "." + versionStr[1]);
-  amd = version < 1.63;
-} catch (e) {
-  // ignore
-}
-
 module.exports = options => ({
   overrideWebpackConfig: ({ webpackConfig, context: { env } }) => {
-    const { loadPartially, loadCSSinHTML, cesiumPath } = {
+    const { loadPartially, loadCSSinHTML, cesiumModuleName, cesiumPath } = {
       loadPartially: false,
       loadCSSinHTML: true,
+      cesiumModuleName: "cesium",
       cesiumPath: "cesium",
       ...options
     };
+
+    const { amd, cesiumSource } = resolveModulePath(cesiumModuleName);
 
     const prod = env === "production";
 
@@ -84,24 +50,26 @@ module.exports = options => ({
       };
 
       webpackConfig.plugins.push(
-        new CopyWebpackPlugin([
-          {
-            from: path.join(cesiumSource, "../Build/Cesium/Workers"),
-            to: path.join(cesiumPath, "Workers")
-          },
-          {
-            from: path.join(cesiumSource, "../Build/Cesium/ThirdParty"),
-            to: path.join(cesiumPath, "ThirdParty")
-          },
-          {
-            from: path.join(cesiumSource, "Assets"),
-            to: path.join(cesiumPath, "Assets")
-          },
-          {
-            from: path.join(cesiumSource, "Widgets"),
-            to: path.join(cesiumPath, "Widgets")
-          }
-        ]),
+        new CopyWebpackPlugin({
+          patterns: [
+            {
+              from: path.join(cesiumSource, "../Build/Cesium/Workers"),
+              to: path.join(cesiumPath, "Workers")
+            },
+            {
+              from: path.join(cesiumSource, "../Build/Cesium/ThirdParty"),
+              to: path.join(cesiumPath, "ThirdParty")
+            },
+            {
+              from: path.join(cesiumSource, "Assets"),
+              to: path.join(cesiumPath, "Assets")
+            },
+            {
+              from: path.join(cesiumSource, "Widgets"),
+              to: path.join(cesiumPath, "Widgets")
+            }
+          ]
+        }),
         ...(loadCSSinHTML
           ? [
               new HtmlWebpackTagsPlugin({
@@ -138,22 +106,26 @@ module.exports = options => ({
       // https://resium.darwineducation.com/installation1
 
       webpackConfig.plugins.push(
-        new CopyWebpackPlugin([
-          {
-            from: path.join(
-              cesiumSource,
-              `../Build/Cesium${prod ? "" : "Unminified"}`
-            ),
-            to: cesiumPath
-          }
-        ]),
-        new HtmlWebpackTagsPlugin({
-          append: false,
-          tags: [
-            ...(loadCSSinHTML ? ["cesium/Widgets/widgets.css"] : []),
-            path.join(cesiumPath, "Cesium.js")
+        new CopyWebpackPlugin({
+          patterns: [
+            {
+              from: path.join(
+                cesiumSource,
+                `../Build/Cesium${prod ? "" : "Unminified"}`
+              ),
+              to: cesiumPath
+            }
           ]
         }),
+        ...(loadCSSinHTML ? [
+          new HtmlWebpackTagsPlugin({
+            append: false,
+            tags: [
+              ...(loadCSSinHTML ? ["cesium/Widgets/widgets.css"] : []),
+              path.join(cesiumPath, "Cesium.js")
+            ]
+          }),
+        ] : []),
         new webpack.DefinePlugin({
           CESIUM_BASE_URL: JSON.stringify(cesiumPath)
         })
@@ -168,3 +140,44 @@ module.exports = options => ({
     return webpackConfig;
   }
 });
+
+function resolveModulePath(name = "cesium") {
+  let pnp = false;
+  try {
+    pnp = !!require("pnpapi");
+  } catch (error) {
+    // not in PnP; not a problem
+  }
+
+  let cesiumSource;
+  if (pnp) {
+    // Craco Cesium using Pnp
+    const topLevelLocation = pnp.getPackageInformation(pnp.topLevel)
+      .packageLocation;
+    cesiumSource = path.resolve(
+      pnp.resolveToUnqualified(name, topLevelLocation, {
+        considerBuiltins: false
+      }),
+      "Source"
+    );
+  } else {
+    // Craco Cesium using normal module
+    cesiumSource = path.join("node_modules", name, "Source");
+  }
+
+  let amd = false;
+  try {
+    const cesiumPackageJson = require(path.resolve(
+      cesiumSource,
+      "..",
+      "package.json"
+    ));
+    const versionStr = cesiumPackageJson.version.split(".");
+    const version = parseFloat(versionStr[0] + "." + versionStr[1]);
+    amd = version < 1.63;
+  } catch (e) {
+    // ignore
+  }
+
+  return { amd, pnp, cesiumSource };
+}
