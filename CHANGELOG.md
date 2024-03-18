@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.0.0 - 2024/03/18
+
+- Upgrade webpack to v5
+- Upgrade other related dependencies
+
 ## v1.2.0 - 2019/11/11
 
 - Add `cesiumPath` option
