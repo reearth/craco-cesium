@@ -15,11 +15,12 @@ try {
 let cesiumSource;
 if (pnp) {
   // Craco Cesium using Pnp
-  const topLevelLocation = pnp.getPackageInformation(pnp.topLevel)
-    .packageLocation;
+  const topLevelLocation = pnp.getPackageInformation(
+    pnp.topLevel
+  ).packageLocation;
   cesiumSource = path.resolve(
     pnp.resolveToUnqualified("cesium", topLevelLocation, {
-      considerBuiltins: false
+      considerBuiltins: false,
     }),
     "Source"
   );
@@ -42,13 +43,13 @@ try {
   // ignore
 }
 
-module.exports = options => ({
+module.exports = (options) => ({
   overrideWebpackConfig: ({ webpackConfig, context: { env } }) => {
     const { loadPartially, loadCSSinHTML, cesiumPath } = {
       loadPartially: false,
       loadCSSinHTML: true,
       cesiumPath: "cesium",
-      ...options
+      ...options,
     };
 
     const prod = env === "production";
@@ -69,49 +70,51 @@ module.exports = options => ({
               loader: "strip-pragma-loader",
               options: {
                 pragmas: {
-                  debug: false
-                }
-              }
-            }
-          ]
+                  debug: false,
+                },
+              },
+            },
+          ],
         });
       }
 
       webpackConfig.resolve.alias = {
         ...webpackConfig.resolve.alias,
         cesium$: "cesium/Cesium",
-        cesium: "cesium/Source"
+        cesium: "cesium/Source",
       };
 
       webpackConfig.plugins.push(
-        new CopyWebpackPlugin([
-          {
-            from: path.join(cesiumSource, "../Build/Cesium/Workers"),
-            to: path.join(cesiumPath, "Workers")
-          },
-          {
-            from: path.join(cesiumSource, "../Build/Cesium/ThirdParty"),
-            to: path.join(cesiumPath, "ThirdParty")
-          },
-          {
-            from: path.join(cesiumSource, "Assets"),
-            to: path.join(cesiumPath, "Assets")
-          },
-          {
-            from: path.join(cesiumSource, "Widgets"),
-            to: path.join(cesiumPath, "Widgets")
-          }
-        ]),
+        new CopyWebpackPlugin({
+          patterns: [
+            {
+              from: path.join(cesiumSource, "../Build/Cesium/Workers"),
+              to: path.join(cesiumPath, "Workers"),
+            },
+            {
+              from: path.join(cesiumSource, "../Build/Cesium/ThirdParty"),
+              to: path.join(cesiumPath, "ThirdParty"),
+            },
+            {
+              from: path.join(cesiumSource, "Assets"),
+              to: path.join(cesiumPath, "Assets"),
+            },
+            {
+              from: path.join(cesiumSource, "Widgets"),
+              to: path.join(cesiumPath, "Widgets"),
+            },
+          ],
+        }),
         ...(loadCSSinHTML
           ? [
               new HtmlWebpackTagsPlugin({
                 append: false,
-                tags: [path.join(cesiumPath, "Widgets", "widgets.css")]
-              })
+                tags: [path.join(cesiumPath, "Widgets", "widgets.css")],
+              }),
             ]
           : []),
         new webpack.DefinePlugin({
-          CESIUM_BASE_URL: JSON.stringify(cesiumPath)
+          CESIUM_BASE_URL: JSON.stringify(cesiumPath),
         })
       );
 
@@ -119,52 +122,54 @@ module.exports = options => ({
         webpackConfig.output = {
           ...webpackConfig.output,
           // Needed to compile multiline strings in Cesium
-          sourcePrefix: ""
+          sourcePrefix: "",
         };
 
         webpackConfig.amd = {
           ...webpackConfig.amd,
           // Enable webpack-friendly use of require in Cesium
-          toUrlUndefined: true
+          toUrlUndefined: true,
         };
       }
 
       webpackConfig.node = {
         ...webpackConfig.node,
         // Resolve node module use of fs
-        fs: "empty"
+        fs: "empty",
       };
     } else {
       // https://resium.darwineducation.com/installation1
 
       webpackConfig.plugins.push(
-        new CopyWebpackPlugin([
-          {
-            from: path.join(
-              cesiumSource,
-              `../Build/Cesium${prod ? "" : "Unminified"}`
-            ),
-            to: cesiumPath
-          }
-        ]),
+        new CopyWebpackPlugin({
+          patterns: [
+            {
+              from: path.join(
+                cesiumSource,
+                `../Build/Cesium${prod ? "" : "Unminified"}`
+              ),
+              to: cesiumPath,
+            },
+          ],
+        }),
         new HtmlWebpackTagsPlugin({
           append: false,
           tags: [
             ...(loadCSSinHTML ? ["cesium/Widgets/widgets.css"] : []),
-            path.join(cesiumPath, "Cesium.js")
-          ]
+            path.join(cesiumPath, "Cesium.js"),
+          ],
         }),
         new webpack.DefinePlugin({
-          CESIUM_BASE_URL: JSON.stringify(cesiumPath)
+          CESIUM_BASE_URL: JSON.stringify(cesiumPath),
         })
       );
 
       webpackConfig.externals = {
         ...webpackConfig.externals,
-        cesium: "Cesium"
+        cesium: "Cesium",
       };
     }
 
     return webpackConfig;
-  }
+  },
 });
